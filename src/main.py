@@ -10,32 +10,53 @@ import keyboard
 
 def dispay(shelf, pixels):
     
-    for square in shelf.squares:
-        for led in square.led_list:
-            pixels[led] = (square.getRed(), square.getGreen(), square.getBlue())
+    for col in shelf.squares:
+        for square in col:
+            for led in square.led_list:
+                pixels[led] = (square.getRed(), square.getGreen(), square.getBlue())
 
     pixels.show()
 
 
 def userInput(shelf, event):
     try:
+        
+        #STATIC
         if keyboard.is_pressed('0'):
+            
             event = events.Off(shelf)
-        if keyboard.is_pressed('1'):
+
+        elif keyboard.is_pressed('1'):
+
             event = events.StaticOrange(shelf)
-        if keyboard.is_pressed('2'):
-            event = events.Fade(shelf)
-        if keyboard.is_pressed('3'):
+
+        elif keyboard.is_pressed('2'):
             event = events.StaticWhite(shelf)
+
+
+        #TRANSITION
+        elif keyboard.is_pressed('q'):
+
+            event = events.Fade(shelf)
+
+        elif keyboard.is_pressed('w'):
+            event = events.Fade2(shelf)
+
+        elif keyboard.is_pressed('e'):
+            event = events.Slide(shelf)
+
+        #GAME
+
     except:
-        print()
+        print("ERROR SETTING EVENT")
     return event
 
 
-numsqares = 13
+numsqares = 9
+ledpersquare = 9
 shelf = s.Shelf(numsqares)
 tick = 1/60 # 60 fps
-pixels = neopixel.NeoPixel(board.D18, numsqares * 4, auto_write=False)
+pixels = neopixel.NeoPixel(board.D18, numsqares * ledpersquare, auto_write=False)
 event = events.Fade(shelf)
 
 t0 = time.time()
@@ -54,4 +75,7 @@ while True:
     dispay(shelf,pixels)
 
     event = userInput(shelf, event)
+
+    if count > 9999:
+        count = 0
     

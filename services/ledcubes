@@ -1,0 +1,13 @@
+#!/bin/bash  
+
+source /home/debian/patcool_fsw/devel/setup.bash
+
+# roslaunch launch fsw.launch &> ~/fsw.log  
+
+# /usr/bin/python /home/debian/patcool_fsw/src/launch/launch/master_start.py &> ~/fsw.log  
+
+roscore & while ! echo exit | nc localhost 11311 > /dev/null; 
+
+do sleep 1; 
+
+done
