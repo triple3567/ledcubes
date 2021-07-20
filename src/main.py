@@ -7,7 +7,6 @@ import shelf as s
 import events
 import keyboard
 
-
 def dispay(shelf, pixels):
     
     for col in shelf.squares:
@@ -51,31 +50,51 @@ def userInput(shelf, event):
         print("ERROR SETTING EVENT")
     return event
 
+print("BREAK 1")
 
 numsqares = 9
 ledpersquare = 9
 shelf = s.Shelf(numsqares)
-tick = 1/60 # 60 fps
+tick = 1/30 # 30 fps
+
 pixels = neopixel.NeoPixel(board.D18, numsqares * ledpersquare, auto_write=False)
-event = events.Fade(shelf)
+
+print("BREAK 2")
+
+event = events.BreathingWhite(shelf)
+
+print("BREAK 3")
+
 
 t0 = time.time()
 count = 0
 
 while True:
 
+    print("BREAK 4")
+
     t1 = time.time()
     while t1 - t0 < tick:
         t1 = time.time()
+
+    print("BREAK 5")
 
     count += 1
     t0 = t1
 
     shelf = event.next(count)
+
+    print("BREAK 6")
+
     dispay(shelf,pixels)
 
-    event = userInput(shelf, event)
+    print("BREAK 7")
+
+    userInput(shelf, event)
+
+    print("BREAK 8")
 
     if count > 9999:
         count = 0
     
+    print(f"frame: %", count)

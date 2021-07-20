@@ -1,4 +1,5 @@
 import shelf
+import math
 
 ## TODO
 ## TIC TAC TOE
@@ -27,6 +28,50 @@ class StaticWhite:
     def next(self, curr_tic):
         self.shelf.setAll(200,200,200)
         return self.shelf
+
+class BreathingOrange:
+    def __init__(self, shelf):
+        self.shelf = shelf
+        self.xpos = 0
+        self.r = 255
+        self.g = 20
+        self.b = 0
+
+    def next(self, curr_tic):
+        self.shelf.setAll(self.func(self.r), self.func(self.g), self.b)
+        self.xpos += 1
+
+        if self.xpos > 628300:
+            self.xpos = 0
+
+        return self.shelf
+
+
+    def func(self, val):
+
+        return int(val * (math.cos(self.xpos / 20) + 1) / 2)
+
+class BreathingWhite:
+    def __init__(self, shelf):
+        self.shelf = shelf
+        self.xpos = 0
+        self.r = 200
+        self.g = 200
+        self.b = 200
+
+    def next(self, curr_tic):
+        self.shelf.setAll(self.func(self.r), self.func(self.g), self.func(self.b))
+        self.xpos += 1
+
+        if self.xpos > 628300:
+            self.xpos = 0
+            
+        return self.shelf
+
+
+    def func(self, val):
+
+        return int(val * (math.cos(self.xpos / 20) + 1) / 2)
 
 class Fade:
 
