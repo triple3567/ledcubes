@@ -44,6 +44,13 @@ def userInput(shelf, event):
         elif keyboard.is_pressed('e'):
             event = events.Slide(shelf)
 
+        elif keyboard.is_pressed('r'):
+            event = events.BreathingOrange(shelf)
+
+        elif keyboard.is_pressed('t'):
+            event = events.BreathingWhite(shelf)
+
+
         #GAME
 
     except:
@@ -55,13 +62,13 @@ print("BREAK 1")
 numsqares = 9
 ledpersquare = 9
 shelf = s.Shelf(numsqares)
-tick = 1/30 # 30 fps
+tick = 1/20 # 20 fps
 
 pixels = neopixel.NeoPixel(board.D18, numsqares * ledpersquare, auto_write=False)
 
 print("BREAK 2")
 
-event = events.BreathingWhite(shelf)
+event = events.Fade2(shelf)
 
 print("BREAK 3")
 

@@ -2,5 +2,6 @@
 
 import board
 import neopixel
-pixels = neopixel.NeoPixel(board.D18, 100)
-pixels.fill((200, 30, 0))
+pixels = neopixel.NeoPixel(board.D18, 92)
+pixels.fill((255, 0, 0))
+# pixels[21] = ((200, 30, 0))

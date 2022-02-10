@@ -1,5 +1,6 @@
 import shelf
 import math
+import random
 
 ## TODO
 ## TIC TAC TOE
@@ -11,6 +12,60 @@ class Off:
 
     def next(self, curr_tic):
         self.shelf.setAll(0,0,0)
+        return self.shelf
+
+class CoinFlip:
+    def __init__(self, shelf):
+        self.shelf = shelf
+        self.pos = 0
+        self.isBlue = False
+        self.timer = 100
+        self.r0 = 0
+        self.g0 = 33
+        self.b0 = 165
+        self.r1 = 250
+        self.g1 = 70
+        self.b1 = 22
+
+        if(random.randint(0, 1) == 1):
+            self.isBlue = True
+
+    def next(self, curr_tic):
+
+        if(self.pos < self.timer and curr_tic % 2 == 0):
+
+            if(self.pos % 2):
+                self.shelf.setSquare(self.r0, self.g0, self.b0, 0, 0)
+                self.shelf.setSquare(self.r0, self.g0, self.b0, 0, 2)
+                self.shelf.setSquare(self.r0, self.g0, self.b0, 1, 1)
+                self.shelf.setSquare(self.r0, self.g0, self.b0, 2, 0)
+                self.shelf.setSquare(self.r0, self.g0, self.b0, 2, 2)
+                
+                self.shelf.setSquare(self.r1, self.g1, self.b1, 0, 1)
+                self.shelf.setSquare(self.r1, self.g1, self.b1, 1, 0)
+                self.shelf.setSquare(self.r1, self.g1, self.b1, 1, 2)
+                self.shelf.setSquare(self.r1, self.g1, self.b1, 2, 1)
+            else:
+                self.shelf.setSquare(self.r1, self.g1, self.b1, 0, 0)
+                self.shelf.setSquare(self.r1, self.g1, self.b1, 0, 2)
+                self.shelf.setSquare(self.r1, self.g1, self.b1, 1, 1)
+                self.shelf.setSquare(self.r1, self.g1, self.b1, 2, 0)
+                self.shelf.setSquare(self.r1, self.g1, self.b1, 2, 2)
+                
+                self.shelf.setSquare(self.r0, self.g0, self.b0, 0, 1)
+                self.shelf.setSquare(self.r0, self.g0, self.b0, 1, 0)
+                self.shelf.setSquare(self.r0, self.g0, self.b0, 1, 2)
+                self.shelf.setSquare(self.r0, self.g0, self.b0, 2, 1)
+
+        else:
+            if(self.isBlue):
+                self.shelf.setAll(self.r0, self.g0, self.b0)
+
+            else:
+                self.shelf.setAll(self.r1, self.g1, self.b1)
+
+        self.pos += 1
+
         return self.shelf
 
 class StaticOrange:
@@ -65,7 +120,7 @@ class BreathingWhite:
 
         if self.xpos > 628300:
             self.xpos = 0
-            
+
         return self.shelf
 
 
@@ -87,7 +142,7 @@ class Fade:
     def next(self, curr_tic):
         
         
-        if curr_tic % 2 == 0:
+        if curr_tic % 1 == 0:
 
             if self.index == 0 and self.direction == 1: # RED UP
                 self.shelf.setAll(self.shelf.squares[0][0].getRed() + 1, self.shelf.squares[0][0].getGreen(), self.shelf.squares[0][0].getBlue())
