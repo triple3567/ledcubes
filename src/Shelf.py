@@ -19,7 +19,7 @@ class Shelf:
         self.numLeds = 92
         self.squares = [s0, s1, s2, s3, s4, s5, s6, s7, s8]
 
-        self.neopixel = neopixel.NeoPixel(board.D18, self.numLeds, auto_write=False)
+        self.neopixel = neopixel.NeoPixel(board.D12, self.numLeds, auto_write=False)
 
 
     def update(self):
@@ -38,6 +38,8 @@ class Shelf:
         
 
     def setSquare(self, r, g, b, index):
+        if index == -1:
+            return
 
         self.squares[index].setRGB(r,g,b)
         return
