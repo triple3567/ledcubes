@@ -1,0 +1,2 @@
+sudo dtc -@ -I dts -O dtb -o spi-cs-extend.dtbo spi-cs-extend.dts
+sudo cp spi-cs-extend.dtbo /boot/overlays
