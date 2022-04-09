@@ -3,6 +3,8 @@ import Shelf as shelf
 import math
 import time
 import requests, json
+from DBHandler import DBHandler
+import logging
 
 class EventSequence(threading.Thread):
     def __init__(self):
@@ -10,6 +12,8 @@ class EventSequence(threading.Thread):
         threading.Thread.__init__(self)
         self.shelf = shelf.Shelf()
         self.stopFlag = False
+        self.dbHandler = DBHandler()
+        logging.basicConfig(filename='../logs/LEDCubes.log', filemode='w', format='%(asctime)s - %(message)s', level=logging.DEBUG)
 
 
     def run(self):
@@ -580,6 +584,129 @@ class Weather(EventSequence):
             time.sleep(0.5)
             tick += 1
 
+class ColorCombination(EventSequence):
+    
+    def __init__(self):
+        super().__init__()
+        self.r = 0
+        self.g = 0
+        self.b = 0
+        self.tick = 0
+
+        self.combinationKey = {
+            0: 'red1',
+            1: 'green',
+            2: 'blue'
+        }
+
+        self.combinationEntered = {
+            0: None,
+            1: None,
+            2: None
+        }
+
+        self.waitingSequence = {
+            0: [[0, 0, 255], [0, 255, 0], [255, 0, 0], [255, 0, 0], [0, 255, 0], [0, 0, 255]],
+            1: [[255, 0, 0], [0, 0 ,255], [0, 255, 0], [0, 255, 0], [0, 0 ,255], [255, 0, 0]],
+            2: [[0, 255, 0], [255, 0, 0], [0, 0 ,255], [0, 0 ,255], [255, 0, 0], [0, 255, 0]],
+            3: [[0, 0 ,255], [0, 255, 0], [255, 0, 0], [255, 0, 0], [0, 255, 0], [0, 0 ,255]],
+            4: [[255, 0, 0], [0, 0 ,255], [0, 255, 0], [0, 255, 0], [0, 0 ,255], [255, 0, 0]], 
+            5: [[0, 255, 0], [255, 0, 0], [0, 0 ,255], [0, 0 ,255], [255, 0, 0], [0, 255, 0]]
+        }
+
+    def waiting(self):
+        step = self.tick % 6
+        sequence = self.waitingSequence[step]
+
+        self.shelf.setSquare(sequence[0][0], sequence[0][1], sequence[0][2], 3)
+        self.shelf.setSquare(sequence[1][0], sequence[1][1], sequence[1][2], 4)
+        self.shelf.setSquare(sequence[2][0], sequence[2][1], sequence[2][2], 5)
+        self.shelf.setSquare(sequence[3][0], sequence[3][1], sequence[3][2], 6)
+        self.shelf.setSquare(sequence[4][0], sequence[4][1], sequence[4][2], 7)
+        self.shelf.setSquare(sequence[5][0], sequence[5][1], sequence[5][2], 8)
+        self.shelf.update()
+
+        self.tick += 1
+
+
+    def run(self):
+        
+        while True:
+
+            for i in range(3):
+
+                tagID, data, timestamp, id = self.dbHandler.getLatestScan(i)
+
+                if data != None:
+
+                    parsed = data.split(':')
+                    if parsed[0] == 'color':
+                        value = parsed[1].strip()
+                        self.combinationEntered[i] = value
+
+            fullyEnteredCombination = True
+
+            for i in range(3):
+
+                if self.combinationEntered[i] == None:
+
+                    fullyEnteredCombination = False
+                    break
+
+            if fullyEnteredCombination:
+
+                correctCombination = True
+
+                for i in range(3):
+
+                    if self.combinationEntered[i] != self.combinationKey[i]:
+
+                        correctCombination = False
+                        
+                        break
+                        logging.debug(str(i) + " = " + str(self.combinationEntered[i]))
+
+                if correctCombination:
+
+                    for i in range(5):
+
+                        self.shelf.setAll(0, 255, 0)
+                        self.shelf.update()
+                        time.sleep(0.5)
+
+                        self.shelf.setAll(0, 0, 0)
+                        self.shelf.update()
+                        time.sleep(0.5)
+
+                        if self.checkStopFlag():
+                            break
+                else:
+
+                    for i in range(5):
+                        
+                        self.shelf.setAll(255, 0, 0)
+                        self.shelf.update()
+                        time.sleep(0.5)
+
+                        self.shelf.setAll(0, 0, 0)
+                        self.shelf.update()
+                        time.sleep(0.5)
+
+                        if self.checkStopFlag():
+                            break
+
+                for i in range(3):
+                    self.combinationEntered[i] = None
+
+            self.waiting()
+
+            if self.checkStopFlag():
+                self.shelf.setAll(0, 0, 0)
+                self.shelf.update()
+                break
+
+            time.sleep(.2)
+        
 
 
 

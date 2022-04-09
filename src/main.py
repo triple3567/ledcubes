@@ -1,9 +1,11 @@
 from EventSequence import Off, ColorSelect, Fade, Circle, Bounce, Weather
+from RfidHandler import RfidHandler
 import color_constants
 import pprint
 
 event = Off()
 event.start()
+
 
 while True:
     print("-1. Exit Program")
